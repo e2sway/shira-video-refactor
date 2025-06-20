@@ -9,7 +9,7 @@
         "testStrategy": "Verify that the `backup/video-features` branch exists and contains a commit with the message \"Backup before video removal\". Confirm that the `refactor/remove-video` branch is created and is the current working branch.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -20,7 +20,7 @@
         "testStrategy": "Confirm that all listed files have been copied to the backup location and that their contents are identical to the originals at the time of backup.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -237,7 +237,7 @@
     ],
     "metadata": {
       "created": "2025-06-20T01:18:50.816Z",
-      "updated": "2025-06-20T01:20:16.045Z",
+      "updated": "2025-06-20T03:22:10.887Z",
       "description": "Tasks for master context"
     }
   }

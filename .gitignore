@@ -9,8 +9,36 @@ dev-debug.log
 # Dependency directories
 node_modules/
 
-# Environment variables
+# Environment variables & API Keys
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+api-keys.json
+secrets.json
+config/secrets.js
+config/keys.js
+
+# Task Master secrets (if any)
+.taskmaster/.env
+.taskmaster/secrets.*
+.taskmaster/config/secrets.*
+
+# MCP configuration with real keys
+.cursor/mcp.json.local
+.cursor/secrets.json
+
+# IDE/Editor sensitive files
+.vscode/settings.json
+.vscode/launch.json
+.idea/workspace.xml
+.idea/tasks.xml
 
 # Editor directories and files
 .idea
@@ -23,3 +51,34 @@ node_modules/
 
 # OS specific
 .DS_Store
+Thumbs.db
+
+# Cloud provider credentials
+.aws/
+.gcp/
+firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# Mobile specific secrets
+android/app/google-services.json
+ios/GoogleService-Info.plist
+android/key.properties
+android/app/my-upload-key.keystore
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Backup files (our manual backups are safe)
+backup/
+backups/
+*.backup
+*.bak

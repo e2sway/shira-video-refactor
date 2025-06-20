@@ -1,0 +1,248 @@
+# Project Requirements: Video Feature Removal
+
+## Project Overview
+**Objective:** Remove all video-related functionality from the Shira learning app while preserving all non-video features including context quiz, cultural view, conversational practice, and progress tracking.
+
+**Scope:** Refactor existing codebase to eliminate video dependencies while maintaining core learning functionality.
+
+**Success Criteria:** 
+- All video components, state, and dependencies removed
+- Non-video learning features function identically to before
+- App compiles and runs without video-related errors
+- Database cleaned of video-specific data
+- Reduced app bundle size from removed dependencies
+
+---
+
+## Phase 1: Project Preparation
+
+### Requirements:
+1. **Create backup strategy**
+   - Create backup branch: `backup/video-features`
+   - Commit current state with message: "Backup before video removal"
+   - Create working branch: `refactor/remove-video`
+
+2. **Backup critical files:**
+   - `/shira_app/app/(tabs)/learn.tsx`
+   - `/shira_app/app/learn-components/learnReducer.ts`
+   - `/shira_app/app/learn-components/types.ts`
+   - `/shira_app/supabase/contentService.ts`
+   - `/shira_app/supabase/types.ts`
+
+3. **Establish baseline functionality testing:**
+   - Context Quiz: Navigate to learn tab, verify quiz loads, test answer submission
+   - Cultural View: Verify content loads and box animations work
+   - Conversational Practice: Test conversation flow and translations
+   - Progress Tracking: Verify streak counter and daily goals
+   - Navigation: Test tab switching and sidebar navigation
+   - Audio Features: Verify expo-av audio functionality still works
+
+**Acceptance Criteria:** All baseline features pass testing and backup branches are created successfully.
+
+---
+
+## Phase 2: Core Video Code Removal from learn.tsx
+
+### Requirements:
+
+#### 2.1 Remove Video-Specific Imports
+**Target Lines:** 15, 23, 45-48, 52-53
+- Remove: `YoutubePlayer, YoutubeIframeRef` from react-native-youtube-iframe
+- Remove: `Video` from expo-av  
+- Remove: `PlayIcon, PauseIcon, UpArrow, DownArrow` SVG imports
+- Remove: `NextVideoIndicator, PreviousVideoIndicator` component imports
+
+#### 2.2 Remove Video Constants  
+**Target Lines:** 98-100
+- Remove: `CAPTION_TIMING_OFFSET = 0.7`
+- Remove: `PROCESSING_DELAY = 0.15` 
+- Remove: `END_TIME_EXTENSION = 0.1`
+
+#### 2.3 Remove Video State Variables
+**Target Lines:** 414-420, 384, 1775-1961, 1962-2000
+- Remove: `videoState` useState declaration and usage
+- Remove: `transitionState` useState declaration and usage
+- Remove: `checkVideoPosition` useEffect hook
+- Remove: `handleReady` useEffect hook
+
+#### 2.4 Remove Video Functions
+**Target Line Ranges:** 1885-1930, 1160-1189, 1561-1580, 1346-1421, 1962-2000
+- Remove: `handlePlayPause` function entirely
+- Remove: `handleSeek` function entirely  
+- Remove: `handleVideoError` function entirely
+- Remove: `updateVideoState` function entirely
+- Remove: `handleReady` function entirely
+
+#### 2.5 Remove Video UI Components
+**Target Line Ranges:** 2443-2527, 2206-2237, 2265-2284
+- Remove: `YoutubePlayer` component JSX
+- Remove: Video controls UI elements
+- Remove: Video progress indicators
+
+**Acceptance Criteria:** App compiles without video-related errors, non-video UI renders correctly, navigation works.
+
+---
+
+## Phase 3: State Management Cleanup
+
+### Requirements:
+
+#### 3.1 Update learnReducer.ts
+- Remove from `LearnState` interface: `isTransitioning: boolean`
+- Remove from `initialLearnState`: `isTransitioning: false`
+- Remove reducer cases: `START_TRANSITION`, `COMPLETE_TRANSITION`
+
+#### 3.2 Clean useEffect Dependencies
+- Update `loadLessons` useEffect to remove video dependencies
+- Update `updateCurrentLessonId` useEffect to remove video dependencies  
+- Update `checkTutorialStatus` useEffect to remove video dependencies
+
+**Acceptance Criteria:** State management works correctly, context quiz functions, cultural view loads properly.
+
+---
+
+## Phase 4: Content Service Modifications
+
+### Requirements:
+
+#### 4.1 Remove Video-Specific Functions
+**Target:** `/shira_app/supabase/contentService.ts` lines 116-161
+- Remove: `saveVideoProgress` function
+- Remove: `checkVideoSaved` function
+- Remove: `toggleVideoSaved` function
+
+#### 4.2 Modify Existing Functions
+- Update `fetchLesson`: Remove video-specific logging
+- Update `fetchNextLesson`: Remove video-specific checks  
+- Update `getCurrentLesson`: Remove video-specific logic
+
+**Acceptance Criteria:** Content loading works, progress tracking functions, user data persistence maintained.
+
+---
+
+## Phase 5: Supporting Files Cleanup
+
+### Requirements:
+
+#### 5.1 Delete Video Component Files
+- Delete: `/shira_app/app/learn-components/NextVideoIndicator.tsx` (entire file)
+- Delete: `/shira_app/app/learn-components/PreviousVideoIndicator.tsx` (entire file)
+
+#### 5.2 Update Type Definitions
+**Target:** `/shira_app/app/learn-components/types.ts`
+- Remove: `VideoData` interface
+- Remove: `Caption` interface  
+- Modify: `LessonContent` interface to exclude video data
+- Keep: All non-video related interfaces
+
+**Acceptance Criteria:** TypeScript compilation passes, no missing type errors, component removal successful.
+
+---
+
+## Phase 6: Dependency Management
+
+### Requirements:
+
+#### 6.1 Remove Video Dependencies
+**Target:** `package.json`
+- Remove: `"react-native-youtube-iframe": "^2.3.0"`
+- Remove: `"react-native-video": "^6.10.0"`
+
+#### 6.2 Preserve Required Dependencies
+- Keep: `expo-av` (required for audio in conversational practice)
+- Keep: All other existing dependencies
+
+**Acceptance Criteria:** App builds successfully, no dependency errors, audio functionality preserved.
+
+---
+
+## Phase 7: Database Schema Updates
+
+### Requirements:
+
+#### 7.1 Content Table Modification
+- Remove video-specific JSONB fields from content table:
+  - `video.id`
+  - `video.length` 
+  - `video.clipStart`
+  - `video.clipEnd`
+  - `video.highlightPhrase`
+  - `video.captions`
+
+#### 7.2 Database Migration
+- Create and execute migration script to remove video data
+- Ensure data integrity for non-video content
+- Backup database before migration
+
+**Acceptance Criteria:** Database queries work, content loads correctly, data integrity maintained.
+
+---
+
+## Phase 8: UI/UX Adjustments
+
+### Requirements:
+
+#### 8.1 Learn Screen Layout Updates
+- Remove video player container space
+- Expand context quiz to utilize available space
+- Adjust component spacing for optimal layout
+- Maintain responsive design principles
+
+#### 8.2 Navigation Updates  
+- Update tab bar to reflect video removal
+- Modify sidebar menu items
+- Ensure smooth navigation between remaining features
+
+**Acceptance Criteria:** UI looks polished without video elements, navigation flows smoothly, responsive design maintained.
+
+---
+
+## Testing Requirements
+
+### Continuous Testing Protocol:
+**After Each Phase:**
+1. Verify app compilation
+2. Test all non-video features function correctly
+3. Check navigation and user flows
+4. Validate data persistence
+5. Confirm no console errors
+
+### Final Integration Testing:
+1. Complete user journey testing
+2. Performance validation  
+3. Cross-platform compatibility (iOS/Android)
+4. Audio functionality verification
+5. Progress tracking accuracy
+
+---
+
+## Rollback Strategy
+
+### Requirements:
+1. **Git-based rollback:** Each phase committed separately for granular rollback
+2. **Database rollback:** Database backup available for restoration
+3. **Dependency rollback:** Package.json changes reversible
+4. **Testing rollback:** Rollback procedures tested before implementation
+
+---
+
+## Definition of Done
+
+### Project Complete When:
+- [ ] All video-related code removed from codebase
+- [ ] All non-video features function identically to baseline
+- [ ] App compiles and runs without errors
+- [ ] Database cleaned of video-specific data
+- [ ] Dependencies optimized (video packages removed)
+- [ ] UI/UX polished for post-video experience
+- [ ] Full regression testing passed
+- [ ] Performance improvements documented
+- [ ] Code review completed
+
+### Success Metrics:
+- 0 video-related imports remaining
+- 0 video-related functions in codebase  
+- App bundle size reduced by removal of video dependencies
+- All baseline functionality tests pass
+- No performance degradation in remaining features
+

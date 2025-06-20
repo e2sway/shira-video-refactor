@@ -1,0 +1,14 @@
+# Task ID: 11
+# Title: Delete Video Component Files
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Remove entire component files for `NextVideoIndicator.tsx` and `PreviousVideoIndicator.tsx` from the project.
+# Details:
+Delete the following files from the filesystem:
+- `/shira_app/app/learn-components/NextVideoIndicator.tsx`
+- `/shira_app/app/learn-components/PreviousVideoIndicator.tsx`
+Ensure any import statements referencing these files in other parts of the codebase are also removed (should have been handled by Task 7 if they were only in learn.tsx).
+
+# Test Strategy:
+Verify the app compiles without errors. Confirm that the specified files are deleted. Perform a global search for their names to ensure no broken imports remain.

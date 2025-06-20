@@ -1,0 +1,14 @@
+# Task ID: 8
+# Title: Update learnReducer.ts for Video Removal
+# Status: pending
+# Dependencies: 7
+# Priority: high
+# Description: Modify `/shira_app/app/learn-components/learnReducer.ts` to remove video-related state properties and reducer cases.
+# Details:
+In `/shira_app/app/learn-components/learnReducer.ts`:
+- From the `LearnState` interface, remove: `isTransitioning: boolean`.
+- From the `initialLearnState` object, remove: `isTransitioning: false`.
+- Remove the reducer cases: `START_TRANSITION` and `COMPLETE_TRANSITION`.
+
+# Test Strategy:
+Verify the app compiles and state management for non-video features (e.g., context quiz, cultural view) continues to work correctly. No errors should be logged related to the removed state properties or reducer cases.

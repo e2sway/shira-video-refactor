@@ -1,0 +1,17 @@
+# Task ID: 2
+# Title: Backup Critical Files
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Manually or via script, create copies of critical application files and store them in a secure location outside the project repository.
+# Details:
+Backup the following files:
+- `/shira_app/app/(tabs)/learn.tsx`
+- `/shira_app/app/learn-components/learnReducer.ts`
+- `/shira_app/app/learn-components/types.ts`
+- `/shira_app/supabase/contentService.ts`
+- `/shira_app/supabase/types.ts`
+Store these copies in a designated backup folder.
+
+# Test Strategy:
+Confirm that all listed files have been copied to the backup location and that their contents are identical to the originals at the time of backup.

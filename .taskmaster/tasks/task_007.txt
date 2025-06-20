@@ -1,0 +1,15 @@
+# Task ID: 7
+# Title: Remove Video UI Components from learn.tsx
+# Status: pending
+# Dependencies: 6
+# Priority: high
+# Description: Delete JSX elements related to the video player, controls, and progress indicators in `/shira_app/app/(tabs)/learn.tsx`.
+# Details:
+In `/shira_app/app/(tabs)/learn.tsx`:
+- Remove the `YoutubePlayer` component JSX (target lines 2443-2527).
+- Remove video controls UI elements (e.g., play/pause buttons, seek bars, target lines 2206-2237).
+- Remove video progress indicators (target lines 2265-2284).
+Search for these components and ensure all related JSX is removed.
+
+# Test Strategy:
+Verify the app compiles and runs. The learn screen should render correctly without any video player, controls, or related UI elements. Navigation and other non-video UI elements should remain functional.

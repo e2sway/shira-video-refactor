@@ -1,0 +1,15 @@
+# Task ID: 9
+# Title: Clean useEffect Dependencies in learn.tsx
+# Status: pending
+# Dependencies: 8
+# Priority: medium
+# Description: Update `useEffect` hooks in `/shira_app/app/(tabs)/learn.tsx` (`loadLessons`, `updateCurrentLessonId`, `checkTutorialStatus`) to remove any dependencies on video-related state or props.
+# Details:
+Review and refactor the dependency arrays of the following `useEffect` hooks in `/shira_app/app/(tabs)/learn.tsx`:
+- `loadLessons`
+- `updateCurrentLessonId`
+- `checkTutorialStatus`
+Remove any variables or functions that were related to video functionality. Ensure the hooks still correctly manage their intended non-video side effects.
+
+# Test Strategy:
+Verify that lesson loading, current lesson ID updates, and tutorial status checks function as expected. Ensure no console warnings about missing dependencies or incorrect behavior due to changed dependency arrays.

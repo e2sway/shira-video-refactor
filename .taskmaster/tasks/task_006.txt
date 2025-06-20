@@ -1,0 +1,16 @@
+# Task ID: 6
+# Title: Remove Video Functions from learn.tsx
+# Status: pending
+# Dependencies: 5
+# Priority: high
+# Description: Delete functions specifically implemented for video playback and control in `/shira_app/app/(tabs)/learn.tsx`.
+# Details:
+In `/shira_app/app/(tabs)/learn.tsx` remove the entire implementation of the following functions:
+- `handlePlayPause` (target lines 1885-1930)
+- `handleSeek` (target lines 1160-1189)
+- `handleVideoError` (target lines 1561-1580)
+- `updateVideoState` (target lines 1346-1421)
+- `handleReady` (target lines 1962-2000, if not fully removed with useEffect)
+
+# Test Strategy:
+Verify the app compiles. Ensure that no parts of the code are still attempting to call these removed functions. Test non-video interactions on the learn screen.

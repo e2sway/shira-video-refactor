@@ -1,0 +1,14 @@
+# Task ID: 15
+# Title: Execute Database Migration and Verify
+# Status: pending
+# Dependencies: 14
+# Priority: high
+# Description: Backup the database, then execute the prepared database migration script. Verify data integrity post-migration.
+# Details:
+1. Perform a full backup of the production database before running any migration scripts.
+2. Execute the SQL migration script (developed in Task 14) on a staging environment first, then on the production database.
+3. After execution, query the database to confirm that video-specific fields/keys are removed from the content table.
+4. Verify that non-video data remains intact and has not been unintentionally altered.
+
+# Test Strategy:
+Confirm successful script execution. Query the database schema and sample records to ensure video data is gone. Test application functionality that reads from the modified table(s) to ensure content loads correctly and data integrity is maintained for non-video content.

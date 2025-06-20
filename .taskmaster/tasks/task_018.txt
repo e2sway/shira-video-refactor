@@ -1,0 +1,19 @@
+# Task ID: 18
+# Title: Perform Full Regression and Final Integration Testing
+# Status: pending
+# Dependencies: 13, 15, 17
+# Priority: high
+# Description: Conduct comprehensive testing covering all aspects of the application, including all baseline features, user journeys, performance, cross-platform compatibility, audio, and progress tracking.
+# Details:
+Execute the full testing protocol as defined in the PRD:
+- Re-run all baseline functionality tests.
+- Perform complete user journey testing for all core paths.
+- Validate application performance; check for improvements (e.g., app bundle size reduction) and ensure no degradation in remaining features.
+- Test on target platforms (iOS/Android).
+- Specifically verify audio functionality in conversational practice (`expo-av`).
+- Confirm progress tracking accuracy (streaks, daily goals).
+- Check for any console errors or warnings.
+- Review UI/UX for polish and adherence to post-video design adjustments.
+
+# Test Strategy:
+All tests must pass. Document all findings. Verify that all success criteria from the PRD's "Definition of Done" and "Success Metrics" sections are met. Specifically confirm reduction in app bundle size.

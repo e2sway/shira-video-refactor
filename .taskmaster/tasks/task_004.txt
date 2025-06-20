@@ -1,0 +1,13 @@
+# Task ID: 4
+# Title: Remove Video Imports & Constants from learn.tsx
+# Status: pending
+# Dependencies: 1, 3
+# Priority: high
+# Description: Delete import statements and constant declarations related to video functionality in `/shira_app/app/(tabs)/learn.tsx`.
+# Details:
+In `/shira_app/app/(tabs)/learn.tsx`:
+- Remove imports: `YoutubePlayer, YoutubeIframeRef` from `react-native-youtube-iframe` (line 15), `Video` from `expo-av` (line 23), `PlayIcon, PauseIcon, UpArrow, DownArrow` SVG imports (lines 45-48), `NextVideoIndicator, PreviousVideoIndicator` component imports (lines 52-53).
+- Remove constants: `CAPTION_TIMING_OFFSET = 0.7`, `PROCESSING_DELAY = 0.15`, `END_TIME_EXTENSION = 0.1` (lines 98-100).
+
+# Test Strategy:
+Verify the app compiles without errors. Check the `learn.tsx` file to ensure the specified imports and constants are removed and not referenced elsewhere in the file causing errors.

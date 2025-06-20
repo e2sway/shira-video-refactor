@@ -1,0 +1,14 @@
+# Task ID: 13
+# Title: Remove Video Dependencies from package.json
+# Status: pending
+# Dependencies: 12
+# Priority: high
+# Description: Uninstall and remove `react-native-youtube-iframe` and `react-native-video` dependencies from the project's `package.json`.
+# Details:
+1. Run `npm uninstall react-native-youtube-iframe react-native-video` or `yarn remove react-native-youtube-iframe react-native-video`.
+2. Verify that `react-native-youtube-iframe` and `react-native-video` are removed from the `dependencies` section of `package.json`.
+3. Verify changes in `package-lock.json` or `yarn.lock`.
+4. Ensure `expo-av` dependency is preserved as it's needed for audio.
+
+# Test Strategy:
+Verify the app builds and runs successfully on target platforms (iOS/Android) after removing dependencies and reinstalling node_modules (e.g., by deleting `node_modules` and running `npm install`). Confirm audio functionality using `expo-av` is still working.

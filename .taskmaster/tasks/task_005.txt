@@ -1,0 +1,15 @@
+# Task ID: 5
+# Title: Remove Video State Variables from learn.tsx
+# Status: pending
+# Dependencies: 4
+# Priority: high
+# Description: Remove `useState` declarations and `useEffect` hooks related to video state management in `/shira_app/app/(tabs)/learn.tsx`.
+# Details:
+In `/shira_app/app/(tabs)/learn.tsx`:
+- Remove `videoState` (`useState` declaration and all its usages, target lines 414-420).
+- Remove `transitionState` (`useState` declaration and all its usages, target line 384).
+- Remove `checkVideoPosition` `useEffect` hook (target lines 1775-1961).
+- Remove `handleReady` `useEffect` hook (target lines 1962-2000).
+
+# Test Strategy:
+Verify the app compiles. Check for runtime errors related to these state variables or effects. Ensure non-video UI elements in `learn.tsx` still render and function correctly.

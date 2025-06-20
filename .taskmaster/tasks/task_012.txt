@@ -1,0 +1,15 @@
+# Task ID: 12
+# Title: Update Type Definitions in types.ts
+# Status: pending
+# Dependencies: 8, 10
+# Priority: high
+# Description: Modify `/shira_app/app/learn-components/types.ts` to remove video-related interfaces and update the `LessonContent` interface.
+# Details:
+In `/shira_app/app/learn-components/types.ts`:
+- Remove the `VideoData` interface.
+- Remove the `Caption` interface.
+- Modify the `LessonContent` interface to exclude any fields related to video data (e.g., `videoId`, `videoUrl`, `captionsArray`, `videoProgress`).
+- Ensure all non-video related interfaces are preserved.
+
+# Test Strategy:
+Verify that TypeScript compilation passes without errors. Check parts of the codebase that use the `LessonContent` type to ensure they align with the updated structure. No type errors should be present related to missing video types.

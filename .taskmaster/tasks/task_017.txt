@@ -1,0 +1,15 @@
+# Task ID: 17
+# Title: Navigation Updates (Tab Bar and Sidebar)
+# Status: pending
+# Dependencies: 16
+# Priority: medium
+# Description: Update the application's tab bar and sidebar menu items to remove any links or references to video features. Ensure navigation between remaining features is smooth.
+# Details:
+1. Identify the code responsible for defining the tab bar structure (likely in your React Navigation setup).
+   - Remove any tabs that were dedicated to video content or features.
+2. Identify the code for the sidebar menu.
+   - Remove any menu items that linked to video-related sections.
+3. Test all navigation paths to ensure they lead to the correct screens and that there are no dead links or errors.
+
+# Test Strategy:
+Verify that the tab bar and sidebar accurately reflect the available, non-video features. Test navigation thoroughly by clicking all tabs and menu items. Ensure smooth transitions and correct screen loading.

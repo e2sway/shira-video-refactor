@@ -1,0 +1,15 @@
+# Task ID: 16
+# Title: Learn Screen Layout Updates
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Adjust the Learn screen UI in `/shira_app/app/(tabs)/learn.tsx` to remove the space previously occupied by the video player and optimize the layout for remaining components like the context quiz.
+# Details:
+Modify the JSX and styles in `/shira_app/app/(tabs)/learn.tsx` and related stylesheet files:
+- Remove the container or layout elements that previously held the video player.
+- Expand the context quiz component or other relevant components to utilize the newly available screen real estate.
+- Adjust margins, padding, and component spacing to ensure a balanced, clean, and visually appealing layout.
+- Ensure the layout remains responsive across different screen sizes and orientations.
+
+# Test Strategy:
+Visually inspect the Learn screen on various device emulators/physical devices. Ensure the UI looks polished, with no awkward empty spaces or misaligned elements. Confirm the context quiz and other components are well-positioned and usable. Test responsiveness.

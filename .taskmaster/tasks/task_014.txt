@@ -1,0 +1,14 @@
+# Task ID: 14
+# Title: Plan Database Migration for Video Data Removal
+# Status: pending
+# Dependencies: 10, 12
+# Priority: high
+# Description: Design and write a SQL migration script to remove video-specific JSONB fields/keys from the content table in the Supabase database.
+# Details:
+Create a SQL migration script. This script will target the table storing lesson content (e.g., `lessons` or `content`).
+If the video data is stored within a JSONB column (e.g., `attributes`) as a nested object (e.g., `video: {id: ..., length: ...}`), the script should remove the entire 'video' key:
+`-- Example: UPDATE your_content_table SET your_jsonb_column = your_jsonb_column - 'video';`
+This will remove `video.id`, `video.length`, `video.clipStart`, `video.clipEnd`, `video.highlightPhrase`, and `video.captions` by removing their parent 'video' object. Document the exact table and column names used in the script. Ensure a database backup plan is in place before execution.
+
+# Test Strategy:
+Review the SQL script for correctness and to ensure it only targets video-specific data. Test the script on a non-production database instance if possible. Confirm that the script is idempotent or clearly documented if not.

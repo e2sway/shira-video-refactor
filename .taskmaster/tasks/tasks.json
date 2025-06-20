@@ -1,0 +1,244 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Create Backup Strategy and Branches",
+        "description": "Implement the backup strategy by creating specified git branches and committing the current state before any video removal work begins.",
+        "details": "Execute the following git commands:\n1. `git checkout -b backup/video-features`\n2. `git add .`\n3. `git commit -m \"Backup before video removal\"`\n4. `git checkout -b refactor/remove-video`\nEnsure you are on the `refactor/remove-video` branch before starting modifications.",
+        "testStrategy": "Verify that the `backup/video-features` branch exists and contains a commit with the message \"Backup before video removal\". Confirm that the `refactor/remove-video` branch is created and is the current working branch.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Backup Critical Files",
+        "description": "Manually or via script, create copies of critical application files and store them in a secure location outside the project repository.",
+        "details": "Backup the following files:\n- `/shira_app/app/(tabs)/learn.tsx`\n- `/shira_app/app/learn-components/learnReducer.ts`\n- `/shira_app/app/learn-components/types.ts`\n- `/shira_app/supabase/contentService.ts`\n- `/shira_app/supabase/types.ts`\nStore these copies in a designated backup folder.",
+        "testStrategy": "Confirm that all listed files have been copied to the backup location and that their contents are identical to the originals at the time of backup.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Establish and Execute Baseline Functionality Testing",
+        "description": "Perform thorough testing of all non-video features to establish a functional baseline. Document all test results.",
+        "details": "Test the following features comprehensively:\n- Context Quiz: Navigate to learn tab, verify quiz loads, test answer submission.\n- Cultural View: Verify content loads and box animations work.\n- Conversational Practice: Test conversation flow and translations.\n- Progress Tracking: Verify streak counter and daily goals.\n- Navigation: Test tab switching and sidebar navigation.\n- Audio Features: Verify expo-av audio functionality still works.",
+        "testStrategy": "All baseline features must pass testing. Document results for each feature, noting any existing bugs or issues to differentiate from new ones introduced during refactoring.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Remove Video Imports & Constants from learn.tsx",
+        "description": "Delete import statements and constant declarations related to video functionality in `/shira_app/app/(tabs)/learn.tsx`.",
+        "details": "In `/shira_app/app/(tabs)/learn.tsx`:\n- Remove imports: `YoutubePlayer, YoutubeIframeRef` from `react-native-youtube-iframe` (line 15), `Video` from `expo-av` (line 23), `PlayIcon, PauseIcon, UpArrow, DownArrow` SVG imports (lines 45-48), `NextVideoIndicator, PreviousVideoIndicator` component imports (lines 52-53).\n- Remove constants: `CAPTION_TIMING_OFFSET = 0.7`, `PROCESSING_DELAY = 0.15`, `END_TIME_EXTENSION = 0.1` (lines 98-100).",
+        "testStrategy": "Verify the app compiles without errors. Check the `learn.tsx` file to ensure the specified imports and constants are removed and not referenced elsewhere in the file causing errors.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Remove Video State Variables from learn.tsx",
+        "description": "Remove `useState` declarations and `useEffect` hooks related to video state management in `/shira_app/app/(tabs)/learn.tsx`.",
+        "details": "In `/shira_app/app/(tabs)/learn.tsx`:\n- Remove `videoState` (`useState` declaration and all its usages, target lines 414-420).\n- Remove `transitionState` (`useState` declaration and all its usages, target line 384).\n- Remove `checkVideoPosition` `useEffect` hook (target lines 1775-1961).\n- Remove `handleReady` `useEffect` hook (target lines 1962-2000).",
+        "testStrategy": "Verify the app compiles. Check for runtime errors related to these state variables or effects. Ensure non-video UI elements in `learn.tsx` still render and function correctly.",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Remove Video Functions from learn.tsx",
+        "description": "Delete functions specifically implemented for video playback and control in `/shira_app/app/(tabs)/learn.tsx`.",
+        "details": "In `/shira_app/app/(tabs)/learn.tsx` remove the entire implementation of the following functions:\n- `handlePlayPause` (target lines 1885-1930)\n- `handleSeek` (target lines 1160-1189)\n- `handleVideoError` (target lines 1561-1580)\n- `updateVideoState` (target lines 1346-1421)\n- `handleReady` (target lines 1962-2000, if not fully removed with useEffect)",
+        "testStrategy": "Verify the app compiles. Ensure that no parts of the code are still attempting to call these removed functions. Test non-video interactions on the learn screen.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Remove Video UI Components from learn.tsx",
+        "description": "Delete JSX elements related to the video player, controls, and progress indicators in `/shira_app/app/(tabs)/learn.tsx`.",
+        "details": "In `/shira_app/app/(tabs)/learn.tsx`:\n- Remove the `YoutubePlayer` component JSX (target lines 2443-2527).\n- Remove video controls UI elements (e.g., play/pause buttons, seek bars, target lines 2206-2237).\n- Remove video progress indicators (target lines 2265-2284).\nSearch for these components and ensure all related JSX is removed.",
+        "testStrategy": "Verify the app compiles and runs. The learn screen should render correctly without any video player, controls, or related UI elements. Navigation and other non-video UI elements should remain functional.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Update learnReducer.ts for Video Removal",
+        "description": "Modify `/shira_app/app/learn-components/learnReducer.ts` to remove video-related state properties and reducer cases.",
+        "details": "In `/shira_app/app/learn-components/learnReducer.ts`:\n- From the `LearnState` interface, remove: `isTransitioning: boolean`.\n- From the `initialLearnState` object, remove: `isTransitioning: false`.\n- Remove the reducer cases: `START_TRANSITION` and `COMPLETE_TRANSITION`.",
+        "testStrategy": "Verify the app compiles and state management for non-video features (e.g., context quiz, cultural view) continues to work correctly. No errors should be logged related to the removed state properties or reducer cases.",
+        "priority": "high",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Clean useEffect Dependencies in learn.tsx",
+        "description": "Update `useEffect` hooks in `/shira_app/app/(tabs)/learn.tsx` (`loadLessons`, `updateCurrentLessonId`, `checkTutorialStatus`) to remove any dependencies on video-related state or props.",
+        "details": "Review and refactor the dependency arrays of the following `useEffect` hooks in `/shira_app/app/(tabs)/learn.tsx`:\n- `loadLessons`\n- `updateCurrentLessonId`\n- `checkTutorialStatus`\nRemove any variables or functions that were related to video functionality. Ensure the hooks still correctly manage their intended non-video side effects.",
+        "testStrategy": "Verify that lesson loading, current lesson ID updates, and tutorial status checks function as expected. Ensure no console warnings about missing dependencies or incorrect behavior due to changed dependency arrays.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Refactor contentService.ts for Video Removal",
+        "description": "Remove video-specific functions and update existing functions in `/shira_app/supabase/contentService.ts` to eliminate video logic, logging, and checks.",
+        "details": "In `/shira_app/supabase/contentService.ts`:\n- Remove functions: `saveVideoProgress`, `checkVideoSaved`, `toggleVideoSaved` (target lines 116-161).\n- Update `fetchLesson`: Remove any video-specific logging.\n- Update `fetchNextLesson`: Remove any video-specific checks.\n- Update `getCurrentLesson`: Remove any video-specific logic.",
+        "testStrategy": "Verify the app compiles. Test content loading for lessons, fetching the next lesson, and retrieving the current lesson. Ensure progress tracking and user data persistence for non-video features are unaffected.",
+        "priority": "high",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Delete Video Component Files",
+        "description": "Remove entire component files for `NextVideoIndicator.tsx` and `PreviousVideoIndicator.tsx` from the project.",
+        "details": "Delete the following files from the filesystem:\n- `/shira_app/app/learn-components/NextVideoIndicator.tsx`\n- `/shira_app/app/learn-components/PreviousVideoIndicator.tsx`\nEnsure any import statements referencing these files in other parts of the codebase are also removed (should have been handled by Task 7 if they were only in learn.tsx).",
+        "testStrategy": "Verify the app compiles without errors. Confirm that the specified files are deleted. Perform a global search for their names to ensure no broken imports remain.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Update Type Definitions in types.ts",
+        "description": "Modify `/shira_app/app/learn-components/types.ts` to remove video-related interfaces and update the `LessonContent` interface.",
+        "details": "In `/shira_app/app/learn-components/types.ts`:\n- Remove the `VideoData` interface.\n- Remove the `Caption` interface.\n- Modify the `LessonContent` interface to exclude any fields related to video data (e.g., `videoId`, `videoUrl`, `captionsArray`, `videoProgress`).\n- Ensure all non-video related interfaces are preserved.",
+        "testStrategy": "Verify that TypeScript compilation passes without errors. Check parts of the codebase that use the `LessonContent` type to ensure they align with the updated structure. No type errors should be present related to missing video types.",
+        "priority": "high",
+        "dependencies": [
+          8,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Remove Video Dependencies from package.json",
+        "description": "Uninstall and remove `react-native-youtube-iframe` and `react-native-video` dependencies from the project's `package.json`.",
+        "details": "1. Run `npm uninstall react-native-youtube-iframe react-native-video` or `yarn remove react-native-youtube-iframe react-native-video`.\n2. Verify that `react-native-youtube-iframe` and `react-native-video` are removed from the `dependencies` section of `package.json`.\n3. Verify changes in `package-lock.json` or `yarn.lock`.\n4. Ensure `expo-av` dependency is preserved as it's needed for audio.",
+        "testStrategy": "Verify the app builds and runs successfully on target platforms (iOS/Android) after removing dependencies and reinstalling node_modules (e.g., by deleting `node_modules` and running `npm install`). Confirm audio functionality using `expo-av` is still working.",
+        "priority": "high",
+        "dependencies": [
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Plan Database Migration for Video Data Removal",
+        "description": "Design and write a SQL migration script to remove video-specific JSONB fields/keys from the content table in the Supabase database.",
+        "details": "Create a SQL migration script. This script will target the table storing lesson content (e.g., `lessons` or `content`).\nIf the video data is stored within a JSONB column (e.g., `attributes`) as a nested object (e.g., `video: {id: ..., length: ...}`), the script should remove the entire 'video' key:\n`-- Example: UPDATE your_content_table SET your_jsonb_column = your_jsonb_column - 'video';`\nThis will remove `video.id`, `video.length`, `video.clipStart`, `video.clipEnd`, `video.highlightPhrase`, and `video.captions` by removing their parent 'video' object. Document the exact table and column names used in the script. Ensure a database backup plan is in place before execution.",
+        "testStrategy": "Review the SQL script for correctness and to ensure it only targets video-specific data. Test the script on a non-production database instance if possible. Confirm that the script is idempotent or clearly documented if not.",
+        "priority": "high",
+        "dependencies": [
+          10,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Execute Database Migration and Verify",
+        "description": "Backup the database, then execute the prepared database migration script. Verify data integrity post-migration.",
+        "details": "1. Perform a full backup of the production database before running any migration scripts.\n2. Execute the SQL migration script (developed in Task 14) on a staging environment first, then on the production database.\n3. After execution, query the database to confirm that video-specific fields/keys are removed from the content table.\n4. Verify that non-video data remains intact and has not been unintentionally altered.",
+        "testStrategy": "Confirm successful script execution. Query the database schema and sample records to ensure video data is gone. Test application functionality that reads from the modified table(s) to ensure content loads correctly and data integrity is maintained for non-video content.",
+        "priority": "high",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Learn Screen Layout Updates",
+        "description": "Adjust the Learn screen UI in `/shira_app/app/(tabs)/learn.tsx` to remove the space previously occupied by the video player and optimize the layout for remaining components like the context quiz.",
+        "details": "Modify the JSX and styles in `/shira_app/app/(tabs)/learn.tsx` and related stylesheet files:\n- Remove the container or layout elements that previously held the video player.\n- Expand the context quiz component or other relevant components to utilize the newly available screen real estate.\n- Adjust margins, padding, and component spacing to ensure a balanced, clean, and visually appealing layout.\n- Ensure the layout remains responsive across different screen sizes and orientations.",
+        "testStrategy": "Visually inspect the Learn screen on various device emulators/physical devices. Ensure the UI looks polished, with no awkward empty spaces or misaligned elements. Confirm the context quiz and other components are well-positioned and usable. Test responsiveness.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Navigation Updates (Tab Bar and Sidebar)",
+        "description": "Update the application's tab bar and sidebar menu items to remove any links or references to video features. Ensure navigation between remaining features is smooth.",
+        "details": "1. Identify the code responsible for defining the tab bar structure (likely in your React Navigation setup).\n   - Remove any tabs that were dedicated to video content or features.\n2. Identify the code for the sidebar menu.\n   - Remove any menu items that linked to video-related sections.\n3. Test all navigation paths to ensure they lead to the correct screens and that there are no dead links or errors.",
+        "testStrategy": "Verify that the tab bar and sidebar accurately reflect the available, non-video features. Test navigation thoroughly by clicking all tabs and menu items. Ensure smooth transitions and correct screen loading.",
+        "priority": "medium",
+        "dependencies": [
+          16
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Perform Full Regression and Final Integration Testing",
+        "description": "Conduct comprehensive testing covering all aspects of the application, including all baseline features, user journeys, performance, cross-platform compatibility, audio, and progress tracking.",
+        "details": "Execute the full testing protocol as defined in the PRD:\n- Re-run all baseline functionality tests.\n- Perform complete user journey testing for all core paths.\n- Validate application performance; check for improvements (e.g., app bundle size reduction) and ensure no degradation in remaining features.\n- Test on target platforms (iOS/Android).\n- Specifically verify audio functionality in conversational practice (`expo-av`).\n- Confirm progress tracking accuracy (streaks, daily goals).\n- Check for any console errors or warnings.\n- Review UI/UX for polish and adherence to post-video design adjustments.",
+        "testStrategy": "All tests must pass. Document all findings. Verify that all success criteria from the PRD's \"Definition of Done\" and \"Success Metrics\" sections are met. Specifically confirm reduction in app bundle size.",
+        "priority": "high",
+        "dependencies": [
+          13,
+          15,
+          17
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-20T01:18:50.816Z",
+      "updated": "2025-06-20T01:20:16.045Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

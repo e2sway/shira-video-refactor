@@ -1,0 +1,17 @@
+# Task ID: 3
+# Title: Establish and Execute Baseline Functionality Testing
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Perform thorough testing of all non-video features to establish a functional baseline. Document all test results.
+# Details:
+Test the following features comprehensively:
+- Context Quiz: Navigate to learn tab, verify quiz loads, test answer submission.
+- Cultural View: Verify content loads and box animations work.
+- Conversational Practice: Test conversation flow and translations.
+- Progress Tracking: Verify streak counter and daily goals.
+- Navigation: Test tab switching and sidebar navigation.
+- Audio Features: Verify expo-av audio functionality still works.
+
+# Test Strategy:
+All baseline features must pass testing. Document results for each feature, noting any existing bugs or issues to differentiate from new ones introduced during refactoring.

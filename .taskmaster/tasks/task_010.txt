@@ -1,0 +1,15 @@
+# Task ID: 10
+# Title: Refactor contentService.ts for Video Removal
+# Status: pending
+# Dependencies: 9
+# Priority: high
+# Description: Remove video-specific functions and update existing functions in `/shira_app/supabase/contentService.ts` to eliminate video logic, logging, and checks.
+# Details:
+In `/shira_app/supabase/contentService.ts`:
+- Remove functions: `saveVideoProgress`, `checkVideoSaved`, `toggleVideoSaved` (target lines 116-161).
+- Update `fetchLesson`: Remove any video-specific logging.
+- Update `fetchNextLesson`: Remove any video-specific checks.
+- Update `getCurrentLesson`: Remove any video-specific logic.
+
+# Test Strategy:
+Verify the app compiles. Test content loading for lessons, fetching the next lesson, and retrieving the current lesson. Ensure progress tracking and user data persistence for non-video features are unaffected.

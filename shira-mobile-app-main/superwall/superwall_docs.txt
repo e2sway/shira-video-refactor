@@ -1,0 +1,975 @@
+Configuring the SDK
+Passing in options
+When configuring the SDK you can pass in options that configure Superwall, the paywall presentation, and its appearance.
+
+​
+Logging
+Logging is enabled by default in the SDK and is controlled by two properties: level and scopes.
+
+level determines the minimum log level to print to the console. There are five types of log level:
+
+debug: Prints all logs from the SDK to the console. Useful for debugging your app if something isn’t working as expected.
+info: Prints errors, warnings, and useful information from the SDK to the console.
+warn: Prints errors and warnings from the SDK to the console.
+error: Only prints errors from the SDK to the console.
+none: Turns off all logs.
+The SDK defaults to info.
+
+scopes defines the scope of logs to print to the console. For example, you might only care about logs relating to paywallPresentation and paywallTransactions. This defaults to .all. Check out LogScope for all possible cases.
+
+You set these properties like this:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = new SuperwallOptions()
+options.logging.level = LogLevel.Warn
+options.logging.scopes = [LogScope.PaywallPresentation, LogScope.PaywallTransactions]
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+
+// Or you can set:
+await Superwall.shared.setLogLevel(LogLevel.Warn)
+​
+Preloading Paywalls
+Paywalls are preloaded by default when the app is launched from a cold start. The paywalls that are preloaded are determined by the list of placements that result in a paywall for the user when registered. Preloading is smart, only preloading paywalls that belong to audiences that could be matched.
+
+Paywalls are cached by default, which means after they load once, they don’t need to be reloaded from the network unless you make a change to them on the dashboard. However, if you have a lot of paywalls, preloading may increase network usage of your app on first load of the paywalls and result in slower loading times overall.
+
+You can turn off preloading by setting shouldPreload to false:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = new SuperwallOptions()
+options.paywalls.shouldPreload = false
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+
+// Or you can set:
+Superwall.instance.logLevel = LogLevel.Warn
+Then, if you’d like to preload paywalls for specific placements you can use preloadPaywalls(forPlacements:):
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+var placements = {"campaign_trigger"};
+Superwall.shared.preloadPaywalls(placements);
+If you’d like to preload all paywalls you can use preloadAllPaywalls():
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+// Coming soon
+Note: These methods will not reload any paywalls that have already been preloaded.
+
+​
+External Data Collection
+By default, Superwall sends all registered events and properties back to the Superwall servers. However, if you have privacy concerns, you can stop this by setting isExternalDataCollectionEnabled to false:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = SuperwallOptions()
+options.isExternalDataCollectionEnabled = false
+
+Superwall.configure(
+  "MY_API_KEY",
+  options: options
+);
+Disabling this will not affect your ability to create triggers based on properties.
+
+​
+Automatically Dismissing the Paywall
+By default, Superwall automatically dismisses the paywall when a product is purchased or restored. You can disable this by setting automaticallyDismiss to false:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = SuperwallOptions()
+options.paywalls.automaticallyDismiss = false
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+To manually dismiss the paywall , call Superwall.shared.dismiss().
+
+​
+Custom Restore Failure Message
+You can set the title, message and close button title for the alert that appears after a restoration failure:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = SuperwallOptions()
+options.paywalls.restoreFailed.title = "My Title"
+options.paywalls.restoreFailed.message = "My message";
+options.paywalls.restoreFailed.closeButtonTitle = "Close";
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+​
+Haptic Feedback
+On iOS, the paywall uses haptic feedback by default after a user purchases or restores a product, opens a URL from the paywall, or closes the paywall. To disable this, set the isHapticFeedbackEnabled PaywallOption to false:
+
+
+Swift
+
+Objective-C
+
+Flutter
+
+React Native
+
+Copy
+const options = SuperwallOptions()
+options.paywalls.isHapticFeedbackEnabled = false;
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+Note: Android does not use haptic feedback.
+
+​
+Transaction Background View
+During a transaction, we add a UIActivityIndicator behind the view to indicate a loading status. However, you can remove this by setting the transactionBackgroundView to nil:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = SuperwallOptions()
+options.paywalls.transactionBackgroundView = TransactionBackgroundView.none
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+​
+Purchase Failure Alert
+When a purchase fails, we automatically present an alert with the error message. If you’d like to show your own alert after failure, set the shouldShowPurchaseFailureAlert PaywallOption to false:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = SuperwallOptions()
+options.paywalls.shouldShowPurchaseFailureAlert = false;
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+​
+Locale Identifier
+When evaluating rules, the device locale identifier is set to autoupdatingCurrent. However, you can override this if you want to test a specific locale:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const options = SuperwallOptions()
+options.localeIdentifier = "en_GB";
+
+Superwall.configure(
+  "MY_API_KEY",
+  null,
+  options: options
+);
+For a list of locales that are available on iOS, take a look at this list. You can also preview your paywall in different locales using In-App Previews.
+
+Manually Handling Purchases and Subscription Status
+If you need fine-grain control over the purchasing pipeline, use a purchase controller.
+
+Using a PurchaseController is only recommended for advanced use cases. Superwall handles all subscription-related logic and purchasing operations for you out of the box.
+
+By default, Superwall handles basic subscription-related logic for you:
+
+Purchasing: When the user initiates a checkout on a paywall.
+Restoring: When the user restores previously purchased products.
+Subscription Status: When the user’s subscription status changes to active or expired (by checking the local receipt).
+However, if you want more control, you can pass in a PurchaseController when configuring the SDK via configure(apiKey:purchaseController:options:) and manually set Superwall.shared.subscriptionStatus to take over this responsibility.
+
+​
+Step 1: Creating a PurchaseController
+A PurchaseController handles purchasing and restoring via protocol methods that you implement. You pass in your purchase controller when configuring the SDK:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+export class MyPurchaseController extends PurchaseController {
+  // 1
+  async purchaseFromAppStore(productId: string): Promise<PurchaseResult> {
+    // TODO
+    // ----
+    // Purchase via StoreKit, RevenueCat, Qonversion or however
+    // you like and return a valid PurchaseResult
+  }
+
+  async purchaseFromGooglePlay(
+    productId: string,
+    basePlanId?: string,
+    offerId?: string
+  ): Promise<PurchaseResult> {
+    // TODO
+    // ----
+    // Purchase via Google Billing, RevenueCat, Qonversion or however
+    // you like and return a valid PurchaseResult
+  }
+
+  // 2
+  async restorePurchases(): Promise<RestorationResult> {
+    // TODO
+    // ----
+    // Restore purchases and return true if successful.
+  }
+}
+
+
+Complete example for iOS
+
+Here’s what each method is responsible for:
+
+Purchasing a given product. In here, enter your code that you use to purchase a product. Then, return the result of the purchase as a PurchaseResult. For Flutter, this is separated into purchasing from the App Store and Google Play. This is an enum that contains the following cases, all of which must be handled:
+.cancelled: The purchase was cancelled.
+.purchased: The product was purchased.
+.pending: The purchase is pending/deferred and requires action from the developer.
+.failed(Error): The purchase failed for a reason other than the user cancelling or the payment pending.
+Restoring purchases. Here, you restore purchases and return a RestorationResult indicating whether the restoration was successful or not. If it was, return .restore, or failed along with the error reason.
+​
+Step 2: Configuring the SDK With Your PurchaseController
+Pass your purchase controller to the configure(apiKey:purchaseController:options:) method:
+
+
+UIKit
+
+SwiftUI
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+export default function App() {
+  React.useEffect(() => {
+    const apiKey = Platform.OS === "ios" ? "MY_IOS_API_KEY" : "MY_ANDROID_API_KEY"
+    const purchaseController = new MyPurchaseController()
+    Superwall.configure({
+      apiKey: apiKey,
+      purchaseController: purchaseController,
+    })
+  }, [])
+}
+​
+Step 3: Keeping subscriptionStatus Up-To-Date
+You must set Superwall.shared.subscriptionStatus every time the user’s subscription status changes, otherwise the SDK won’t know who to show a paywall to. This is an enum that has three possible cases:
+
+.unknown: This is the default value. In this state, paywalls will not show and their presentation will be automatically delayed until subscriptionStatus changes to a different value.
+.active(let entitlements): Indicates that the user has an active entitlement. Paywalls will not show in this state unless you remotely set the paywall to ignore subscription status. A user can have one or more active entitlement.
+.inactive: Indicates that the user doesn’t have an active entitlement. Paywalls can show in this state.
+Here’s how you might do this:
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+// When a subscription is purchased, restored, validated, expired, etc...
+myService.addSubscriptionStatusListener((subscriptionInfo: SubscriptionInfo) => {
+  const entitlements = Object.keys(subscriptionInfo.entitlements.active).map((id) => ({
+    id,
+  }))
+  if (entitlements.length === 0) {
+    Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive())
+  } else {
+    Superwall.shared.setSubscriptionStatus(
+      SubscriptionStatus.Active(entitlements.map((id) => new Entitlement(id)))
+    )
+  }
+})
+
+subscriptionStatus is cached between app launches
+​
+Listening for subscription status changes
+If you need a simple way to observe when a user’s subscription status changes, on iOS you can use the Publisher for it. Here’s an example:
+
+
+iOS
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+Superwall.shared.subscriptionStatusEmitter.addListener("change", (status) => {
+  switch (status.status) {
+    case "ACTIVE":
+      break
+    default:
+      break
+  }
+})
+
+Using RevenueCat
+If you want to use RevenueCat to handle your subscription-related logic with Superwall, follow this guide.
+
+Not using RevenueCat? No problem! Superwall works out of the box without any additional SDKs.
+
+Integrate RevenueCat with Superwall in one of two ways:
+
+Using a purchase controller: Use this route if you want to maintain control over purchasing logic and code.
+Using PurchasesAreCompletedBy: Here, you don’t use a purchase controller and you tell RevenueCat that purchases are completed by your app using StoreKit. In this mode, RevenueCat will observe the purchases that the Superwall SDK makes. For more info see here.
+​
+1. Create a PurchaseController
+Create a new file called RCPurchaseController.swift or RCPurchaseController.kt, then copy and paste the following:
+
+
+Swift
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+import { Platform } from "react-native"
+import Superwall, {
+  PurchaseController,
+  PurchaseResult,
+  RestorationResult,
+  SubscriptionStatus,
+  PurchaseResultCancelled,
+  PurchaseResultFailed,
+  PurchaseResultPending,
+  PurchaseResultPurchased,
+} from '@superwall/react-native-superwall';
+import Purchases, {
+  type CustomerInfo,
+  PRODUCT_CATEGORY,
+  type PurchasesStoreProduct,
+  type SubscriptionOption,
+  PURCHASES_ERROR_CODE,
+  type MakePurchaseResult,
+} from "react-native-purchases"
+
+export class RCPurchaseController extends PurchaseController {
+  constructor() {
+    super()
+
+    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+    const apiKey = Platform.OS === 'ios' ? 'ios_rc_key' : 'android_rc_key';
+    Purchases.configure({ apiKey });
+  }
+
+  syncSubscriptionStatus() {
+    // Listen for changes
+    Purchases.addCustomerInfoUpdateListener((customerInfo) => {
+      const entitlementIds = Object.keys(customerInfo.entitlements.active)
+      Superwall.shared.setSubscriptionStatus(
+        entitlementIds.length === 0
+          ? SubscriptionStatus.Inactive()
+          : SubscriptionStatus.Active(entitlementIds)
+      )
+    })
+  }
+
+  async purchaseFromAppStore(productId: string): Promise<PurchaseResult> {
+    const products = await Promise.all([
+      Purchases.getProducts([productId], PRODUCT_CATEGORY.SUBSCRIPTION),
+      Purchases.getProducts([productId], PRODUCT_CATEGORY.NON_SUBSCRIPTION),
+    ]).then((results) => results.flat())
+
+    // Assuming an equivalent for Dart's firstOrNull is not directly available in TypeScript,
+    // so using a simple conditional check
+    const storeProduct = products.length > 0 ? products[0] : null
+
+    if (!storeProduct) {
+      return new PurchaseResultFailed("Failed to find store product for $productId")
+    }
+
+    return await this._purchaseStoreProduct(storeProduct)
+  }
+
+  async purchaseFromGooglePlay(
+    productId: string,
+    basePlanId?: string,
+    offerId?: string
+  ): Promise<PurchaseResult> {
+    // Find products matching productId from RevenueCat
+    const products = await Promise.all([
+      Purchases.getProducts([productId], PRODUCT_CATEGORY.SUBSCRIPTION),
+      Purchases.getProducts([productId], PRODUCT_CATEGORY.NON_SUBSCRIPTION),
+    ]).then((results) => results.flat())
+
+    // Choose the product which matches the given base plan.
+    // If no base plan set, select first product or fail.
+    const storeProductId = `${productId}:${basePlanId}`
+
+    // Initialize matchingProduct as null explicitly
+    let matchingProduct: PurchasesStoreProduct | null = null
+
+    // Loop through each product in the products array
+    for (const product of products) {
+      // Check if the current product's identifier matches the given storeProductId
+      if (product.identifier === storeProductId) {
+        // If a match is found, assign this product to matchingProduct
+        matchingProduct = product
+        // Break the loop as we found our matching product
+        break
+      }
+    }
+
+    let storeProduct: PurchasesStoreProduct | null =
+      matchingProduct ??
+      (products.length > 0 && typeof products[0] !== "undefined" ? products[0] : null)
+
+    // If no product is found (either matching or the first one), return a failed purchase result.
+    if (storeProduct === null) {
+      return new PurchaseResultFailed("Product not found")
+    }
+
+    switch (storeProduct.productCategory) {
+      case PRODUCT_CATEGORY.SUBSCRIPTION:
+        const subscriptionOption = await this._fetchGooglePlaySubscriptionOption(
+          storeProduct,
+          basePlanId,
+          offerId
+        )
+        if (subscriptionOption === null) {
+          return new PurchaseResultFailed("Valid subscription option not found for product.")
+        }
+        return await this._purchaseSubscriptionOption(subscriptionOption)
+      case PRODUCT_CATEGORY.NON_SUBSCRIPTION:
+        return await this._purchaseStoreProduct(storeProduct)
+      default:
+        return new PurchaseResultFailed("Unable to determine product category")
+    }
+  }
+
+  private async _purchaseStoreProduct(
+    storeProduct: PurchasesStoreProduct
+  ): Promise<PurchaseResult> {
+    const performPurchase = async (): Promise<MakePurchaseResult> => {
+      // Attempt to purchase product
+      const makePurchaseResult = await Purchases.purchaseStoreProduct(storeProduct)
+      return makePurchaseResult
+    }
+    return await this.handleSharedPurchase(performPurchase)
+  }
+
+  private async _fetchGooglePlaySubscriptionOption(
+    storeProduct: PurchasesStoreProduct,
+    basePlanId?: string,
+    offerId?: string
+  ): Promise<SubscriptionOption | null> {
+    const subscriptionOptions = storeProduct.subscriptionOptions
+
+    if (subscriptionOptions && subscriptionOptions.length > 0) {
+      // Concatenate base + offer ID
+      const subscriptionOptionId = this.buildSubscriptionOptionId(basePlanId, offerId)
+
+      // Find first subscription option that matches the subscription option ID or use the default offer
+      let subscriptionOption: SubscriptionOption | null = null
+
+      // Search for the subscription option with the matching ID
+      for (const option of subscriptionOptions) {
+        if (option.id === subscriptionOptionId) {
+          subscriptionOption = option
+          break
+        }
+      }
+
+      // If no matching subscription option is found, use the default option
+      subscriptionOption = subscriptionOption ?? storeProduct.defaultOption
+
+      // Return the subscription option
+      return subscriptionOption
+    }
+
+    return null
+  }
+
+  private buildSubscriptionOptionId(basePlanId?: string, offerId?: string): string {
+    let result = ""
+
+    if (basePlanId !== null) {
+      result += basePlanId
+    }
+
+    if (offerId !== null) {
+      if (basePlanId !== null) {
+        result += ":"
+      }
+      result += offerId
+    }
+
+    return result
+  }
+
+  private async _purchaseSubscriptionOption(
+    subscriptionOption: SubscriptionOption
+  ): Promise<PurchaseResult> {
+    // Define the async perform purchase function
+    const performPurchase = async (): Promise<MakePurchaseResult> => {
+      // Attempt to purchase product
+      const purchaseResult = await Purchases.purchaseSubscriptionOption(subscriptionOption)
+      return purchaseResult
+    }
+
+    const purchaseResult: PurchaseResult = await this.handleSharedPurchase(performPurchase)
+    return purchaseResult
+  }
+
+  private async handleSharedPurchase(
+    performPurchase: () => Promise<MakePurchaseResult>
+  ): Promise<PurchaseResult> {
+    try {
+      // Perform the purchase using the function provided
+      const makePurchaseResult = await performPurchase()
+
+      // Handle the results
+      if (this.hasActiveEntitlementOrSubscription(makePurchaseResult.customerInfo)) {
+        return new PurchaseResultPurchased()
+      } else {
+        return new PurchaseResultFailed("No active subscriptions found.")
+      }
+    } catch (e: any) {
+      // Catch block to handle exceptions, adjusted for TypeScript
+      if (e.userCancelled) {
+        return new PurchaseResultCancelled()
+      }
+      if (e.code === PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR) {
+        return new PurchaseResultPending()
+      } else {
+        return new PurchaseResultFailed(e.message)
+      }
+    }
+  }
+
+  async restorePurchases(): Promise<RestorationResult> {
+    try {
+      await Purchases.restorePurchases()
+      return RestorationResult.restored()
+    } catch (e: any) {
+      return RestorationResult.failed(e.message)
+    }
+  }
+
+  private hasActiveEntitlementOrSubscription(customerInfo: CustomerInfo): Boolean {
+    return (
+      customerInfo.activeSubscriptions.length > 0 &&
+      Object.keys(customerInfo.entitlements.active).length > 0
+    )
+  }
+}
+As discussed in Purchases and Subscription Status, this PurchaseController is responsible for handling the subscription-related logic. Take a few moments to look through the code to understand how it does this.
+
+​
+2. Configure Superwall
+Initialize an instance of RCPurchaseController and pass it in to Superwall.configure(apiKey:purchaseController):
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+React.useEffect(() => {
+  const apiKey = Platform.OS === "ios" ? "MY_SUPERWALL_IOS_API_KEY" : "MY_SUPERWALL_ANDROID_API_KEY"
+
+  const purchaseController = new RCPurchaseController()
+
+  Superwall.configure(apiKey, null, purchaseController)
+  purchaseController.syncSubscriptionStatus()
+}, [])
+​
+3. Sync the subscription status
+Then, call purchaseController.syncSubscriptionStatus() to keep Superwall’s subscription status up to date with RevenueCat.
+
+User Management
+It is necessary to uniquely identify users to track their journey within Superwall.
+
+​
+Anonymous Users
+Superwall automatically generates a random user ID that persists internally until the user deletes/reinstalls your app.
+
+You can call Superwall.shared.reset() to reset this ID and clear any paywall assignments.
+
+​
+Identified Users
+If you use your own user management system, call identify(userId:options:) when you have a user’s identity. This will alias your userId with the anonymous Superwall ID enabling us to load the user’s assigned paywalls.
+
+Calling Superwall.shared.reset() will reset the on-device userId to a random ID and clear the paywall assignments.
+
+Note that for Android apps, if you want the userId passed to the Play Store when making purchases, you’ll also need to set passIdentifiersToPlayStore via SuperwallOptions. Be aware of Google’s rules that the userId must not contain any personally identifiable information, otherwise the purchase could be rejected.
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+React Native
+
+Flutter
+
+Copy
+// After retrieving a user's ID, e.g. from logging in or creating an account
+Superwall.shared.identify(user.id);
+
+// When the user signs out
+Superwall.shared.reset();
+
+Advanced Use Case
+
+You can supply an IdentityOptions object, whose property restorePaywallAssignments you can set to true. This tells the SDK to wait to restore paywall assignments from the server before presenting any paywalls. This should only be used in advanced use cases. If you expect users of your app to switch accounts or delete/reinstall a lot, you’d set this when users log in to an existing account.
+
+​
+Best Practices for a Unique User ID
+Do NOT make your User IDs guessable – they are public facing.
+Do NOT set emails as User IDs – this isn’t GDPR compliant.
+Do NOT set IDFA or DeviceIds as User IDs – these are device specific / easily rotated by the operating system.
+Do NOT hardcode strings as User IDs – this will cause every user to be treated as the same user by Superwall.
+
+Showing Paywalls
+At the heart of Superwall’s SDK lies Superwall.shared.register(placement:params:handler:feature:).
+
+This allows you to register a placement to access a feature that may or may not be paywalled later in time. It also allows you to choose whether the user can access the feature even if they don’t make a purchase.
+
+Here’s an example.
+
+​
+With Superwall
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+// remotely decide if a paywall is shown and if
+// navigation.startWorkout() is a paid-only feature
+Superwall.shared.register({
+  placement: 'StartWorkout',
+  feature: () => {
+    navigation.navigate('LaunchedFeature', {
+      value: 'Non-gated feature launched',
+    });
+  } 
+});
+​
+Without Superwall
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+function pressedWorkoutButton() {
+  if (user.hasActiveSubscription) {
+    navigation.startWorkout()
+  } else {
+    navigation.presentPaywall().then((result: boolean) => {
+      if (result) {
+        navigation.startWorkout()
+      } else {
+        // user didn't pay, developer decides what to do
+      }
+    })
+  }
+}
+​
+How registering placements presents paywalls
+You can configure "StartWorkout" to present a paywall by creating a campaign, adding the placement, and adding a paywall to an audience in the dashboard.
+
+The SDK retrieves your campaign settings from the dashboard on app launch.
+When a placement is called that belongs to a campaign, audiences are evaluated on device and the user enters an experiment — this means there’s no delay between registering a placement and presenting a paywall.
+If it’s the first time a user is entering an experiment, a paywall is decided for the user based on the percentages you set in the dashboard
+Once a user is assigned a paywall for an audience, they will continue to see that paywall until you remove the paywall from the audience or reset assignments to the paywall.
+After the paywall is closed, the Superwall SDK looks at the Feature Gating value associated with your paywall, configurable from the paywall editor under General > Feature Gating (more on this below)
+If the paywall is set to Non Gated, the feature: closure on register(placement: ...) gets called when the paywall is dismissed (whether they paid or not)
+If the paywall is set to Gated, the feature: closure on register(placement: ...) gets called only if the user is already paying or if they begin paying.
+If no paywall is configured, the feature gets executed immediately without any additional network calls.
+Given the low cost nature of how register works, we strongly recommend registering all core functionality in order to remotely configure which features you want to gate – without an app update.
+
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+// on the welcome screen
+function pressedSignUp() {
+  Superwall.shared.register({
+    placement: 'SignUp',
+    feature: () => {
+      navigation.beginOnboarding()
+    }
+  });
+}
+
+function pressedWorkoutButton() {
+  Superwall.shared.register({
+    placement: 'StartWorkout',
+    feature: () => {
+     navigation.startWorkout()
+    }
+  })
+}
+
+Using Placement Parameters
+Placement parameters allow you to send additional data to the Superwall platform when registering placements.
+
+You can send parameters along with any placement you create. For example, if you had a caffeine logging app — perhaps you’d have a placement for logging caffeine:
+
+
+Copy
+// In iOS...
+Superwall.shared.register(placement: "caffeineLogged") {
+    store.log(amountToLog)
+}
+Now, imagine you could log caffeine from several different touch points in your app. You may wish to know where the user tried to log caffeine from, and you could tie a parameter to the caffeineLogged placement to do this:
+
+
+iOS
+
+Android
+
+Flutter
+
+React Native
+
+Copy
+Superwall.shared.register({
+  placement: 'caffeineLogged',
+  params: new Map([["via", "logging_page"]]),
+  feature: ()=>{
+    console.log("show coffee")
+  }
+});
+The via parameter could now be used all throughout Superwall. You could create a new audience which has filters for each place users logged caffeine from, and unique paywalls for each of them.
+
+Parameter placements can be used in four primary ways:
+
+Audience Filtering: As mentioned above, you can filter against parameters when creating audiences. Following our example, you’d create a placement parameter named via and then choose how to filter off of the parameter’s value:
+
+
+Templating in Text: Parameters are available in our paywall editor, so you can easily use them in text components too:
+
+
+Copy
+Hey {{user.firstName}}! FitnessAI offers tons of {{user.fitnessGoal}} workouts to help you reach your goals :)
+Interfacing with Analytics: Another common scenario is cohorting with your own analytics. See this doc for more.
+
+Reference them on Paywalls: Display dynamic images by constructing URLs based on placement parameters, change copy on a paywall to emphasize a feature, and more. For more, check out the docs over creating custom variables.
+
+Showing Paywalls
+Using the Presentation Handler When Presenting Paywalls
+The PaywallPresentationHandler enables you to monitor and respond to key events during paywall presentation, such as when a paywall is displayed, dismissed, encounters an error, or is skipped.
+
+You can provide a PaywallPresentationHandler to register, whose functions provide status updates for a paywall:
+
+onDismiss: Called when the paywall is dismissed. Accepts a PaywallInfo object containing info about the dismissed paywall, and there is a PaywallResult informing you of any transaction.
+onPresent: Called when the paywall did present. Accepts a PaywallInfo object containing info about the presented paywall.
+onError: Called when an error occurred when trying to present a paywall. Accepts an Error indicating why the paywall could not present.
+onSkip: Called when a paywall is skipped. Accepts a PaywallSkippedReason enum indicating why the paywall was skipped.
+
+Swift
+
+Objective-C
+
+Kotlin
+
+Flutter
+
+React Native
+
+Copy
+const handler = new PaywallPresentationHandler()
+handler.onPresent((paywallInfo) => {
+  const name = paywallInfo.name
+  console.log(`Handler (onPresent): ${name}`)
+})
+handler.onDismiss((paywallInfo, paywallResult) => {
+  const name = paywallInfo.name
+  console.log(`Handler (onDismiss): ${name}`)
+})
+handler.onError((error) => {
+  console.log(`Handler (onError): ${error}`)
+})
+handler.onSkip((skipReason) => {
+  const description = skipReason.description
+
+  if (skipReason instanceof PaywallSkippedReasonHoldout) {
+    console.log(`Handler (onSkip): ${description}`)
+    const experiment = skipReason.experiment
+    const experimentId = experiment.id
+    console.log(`Holdout with experiment: ${experimentId}`)
+  } else if (skipReason instanceof PaywallSkippedReasonNoAudienceMatch) {
+    console.log(`Handler (onSkip): ${description}`)
+  } else if (skipReason instanceof PaywallSkippedReasonPlacementNotFound) {
+    console.log(`Handler (onSkip): ${description}`)
+  } else {
+    console.log(`Handler (onSkip): Unknown skip reason`)
+  }
+})
+
+Superwall.shared.register({
+  placement: 'campaign_trigger',
+  handler: handler,
+  feature: () => {
+    // Feature launched
+  }
+});
+

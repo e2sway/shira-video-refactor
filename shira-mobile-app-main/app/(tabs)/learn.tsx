@@ -565,9 +565,6 @@ const Learn: React.FC = () => {
     // Main state reducer
     const [state, dispatch] = useReducer(learnReducer, initialLearnState);
 
-    // Add a state to track video transition
-    const [transitionState, setTransitionState] = useState<'idle' | 'unloading' | 'loading' | 'seeking' | 'playing'>('idle');
-
     // Local UI states
     const [showContextView, setShowContextView] = useState(false);
     const [showCulturalView, setShowCulturalView] = useState(false);
@@ -880,7 +877,6 @@ const Learn: React.FC = () => {
         logEvent('COMPLETE_STATE_RESET', {
             previousVideoId: previousVideoId,
             isTransitioning: state.isTransitioning,
-            transitionState,
             clipStart: state.currentLesson?.data.video.clipStart,
             clipEnd: state.currentLesson?.data.video.clipEnd
         });
@@ -928,7 +924,6 @@ const Learn: React.FC = () => {
         });
     }, [
         // Include all state variables that are being reset
-        transitionState, 
         state.isTransitioning,
         state.currentLesson,
         pauseIndicatorOpacity,
@@ -1052,13 +1047,9 @@ const Learn: React.FC = () => {
             // This ensures no state from the previous video persists
             completeStateReset();
             
-            // Set transition state to unloading to trigger the state machine
-            setTransitionState('unloading');
-            
             logEvent('TRANSITION_STARTED', { 
                 fromLessonId: state.currentLesson.id,
-                targetLang: user.target_lang,
-                transitionState: 'unloading'
+                targetLang: user.target_lang
             });
             
             // Calculate the next lesson ID
@@ -1150,9 +1141,6 @@ const Learn: React.FC = () => {
             dispatch({ type: 'SET_ERROR', payload: 'Failed to transition to next lesson' });
             dispatch({ type: 'SET_LOADING', payload: false });
             
-            // Reset transition state on error
-            setTransitionState('idle');
-            
             // Show error toast
             Toast.show({
                 type: 'error',
@@ -1208,13 +1196,9 @@ const Learn: React.FC = () => {
             // Reset ALL state before changing the video
             completeStateReset();
             
-            // Set transition state to unloading to trigger the state machine
-            setTransitionState('unloading');
-            
             logEvent('PREVIOUS_TRANSITION_STARTED', { 
                 fromLessonId: state.currentLesson.id,
-                targetLang: user.target_lang,
-                transitionState: 'unloading'
+                targetLang: user.target_lang
             });
             
             // Calculate the previous lesson ID
@@ -1271,9 +1255,6 @@ const Learn: React.FC = () => {
             
             dispatch({ type: 'SET_ERROR', payload: 'Failed to transition to previous lesson' });
             dispatch({ type: 'SET_LOADING', payload: false });
-            
-            // Reset transition state on error
-            setTransitionState('idle');
             
             // Show error toast
             Toast.show({
@@ -1640,11 +1621,10 @@ const Learn: React.FC = () => {
         // Skip updates if the video ID doesn't match the current one
         if (currentVideoIdRef.current !== videoId) {
             // If we're in a transition, update the reference instead of skipping
-            if (state.isTransitioning || transitionState === 'loading') {
+            if (state.isTransitioning) {
                 console.log("[VIDEO_ID_AUTO_CORRECTION] Updating currentVideoIdRef during transition", {
                     oldVideoId: currentVideoIdRef.current,
                     newVideoId: videoId,
-                    transitionState,
                     timestamp: new Date().toISOString()
                 });
                 currentVideoIdRef.current = videoId;
@@ -1659,9 +1639,9 @@ const Learn: React.FC = () => {
         }
         
         // Check if we're in a transition state - don't try to update video state during transitions
-        if (state.isTransitioning || transitionState !== 'playing') {
+        if (state.isTransitioning) {
             logEvent('VIDEO_STATE_UPDATE_SKIPPED', {
-                reason: state.isTransitioning ? 'In transition' : `Transition state: ${transitionState}`,
+                reason: 'In transition',
                 videoId
             });
             return;
@@ -2036,30 +2016,7 @@ const Learn: React.FC = () => {
         await updateVideoState(data.currentTime);
     }, [state.currentLesson, state.isTransitioning, updateVideoState]);
 
-    // Add effect to handle video transition state machine
-    useEffect(() => {
-        if (transitionState === 'unloading') {
-            // Reset the video player when transitioning
-            resetVideoPlayer();
-            
-            // Move to the loading state after a short delay
-            setTimeout(() => {
-                setTransitionState('loading');
-                logEvent('TRANSITION_STATE_LOADING', {
-                    transitionState: 'loading'
-                });
-            }, 100);
-        } else if (transitionState === 'loading') {
-            // Ensure we have a clean state when loading a new video
-            // This is a safety check in case we enter the loading state from somewhere else
-            if (currentVideoIdRef.current !== null) {
-                logEvent('UNEXPECTED_VIDEO_ID_IN_LOADING_STATE', {
-                    currentVideoId: currentVideoIdRef.current
-                });
-                currentVideoIdRef.current = null;
-            }
-        }
-    }, [transitionState, resetVideoPlayer]);
+
 
     // Video control handlers
     const handlePlayPause = useCallback(async () => {
@@ -2364,20 +2321,13 @@ const Learn: React.FC = () => {
                                                     videoId: state.currentLesson?.data.video.id
                                                 });
                                                 
-                                                // Reset transition state on error
-                                                if (transitionState !== 'idle' && transitionState !== 'playing') {
-                                                    setTransitionState('playing');
-                                                    logEvent('FORCED_TRANSITION_TO_PLAYING_AFTER_YOUTUBE_ERROR', {
-                                                        videoId: state.currentLesson?.data.video.id
-                                                    });
-                                                }
+                                                // Reset transition state on error handled by dispatch
                                             }}
                                             onChangeState={(e: string) => {
                                                 console.log('YouTube Player State Change:', e);
                                                 logEvent('YOUTUBE_PLAYER_STATE_CHANGE', {
                                                     state: e,
-                                                    videoId: state.currentLesson?.data.video.id,
-                                                    transitionState
+                                                    videoId: state.currentLesson?.data.video.id
                                                 });
                                                 
                                                 // If the player is paused, update our state

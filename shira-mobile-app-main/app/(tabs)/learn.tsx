@@ -23,7 +23,7 @@ import {
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe';
+
 import { BlurView } from 'expo-blur';
 import InstructionsView from '../views/InstructionsView';
 // @ts-ignore
@@ -43,14 +43,6 @@ import CompletionView from '../views/CompletionView';
 
 // SVG icons
 // @ts-ignore
-import PlayIcon from '../components/play.svg';
-// @ts-ignore
-import PauseIcon from '../components/pause.svg';
-// @ts-ignore
-import UpArrow from '../components/up_arrow.svg';
-// @ts-ignore
-import DownArrow from '../components/down_arrow.svg';
-// @ts-ignore
 import TranslateIcon from '../components/translate.svg';
 // @ts-ignore
 import WorldIcon from '../components/world.svg';
@@ -69,8 +61,7 @@ import Superwall from '@superwall/react-native-superwall';
 
 // Import components
 import TopControls from '../learn-components/TopControls';
-import NextVideoIndicator from '../learn-components/NextVideoIndicator';
-import PreviousVideoIndicator from '../learn-components/PreviousVideoIndicator';
+
 
 // Import reducer and types
 import learnReducer, { initialLearnState } from '../learn-components/learnReducer';
@@ -81,7 +72,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SidebarView from '../views/SidebarView';
 import TabBar from '../views/TabBar';
 import DotIndicator from '../components/DotIndicator';
-import { Video } from 'expo-av';
+
 import * as Haptics from 'expo-haptics';
 
 // Constants for the collapsible lessons container
@@ -97,10 +88,7 @@ const MAX_FREE_VIDEOS = 3;
 // Debug flag to control logging verbosity
 const DEBUG_MODE = false;
 
-// Caption timing constant - make captions appear earlier for better sync
-const CAPTION_TIMING_OFFSET = 0.7; // increased from 0.3 to 0.7 seconds for more noticeable earlier display
-const PROCESSING_DELAY = 0.15; // Additional offset for processing/rendering delays
-const END_TIME_EXTENSION = 0.1; // Keep captions visible a little longer than their end time
+
 
 // Add debounce utility
 const debounce = <F extends (...args: any[]) => any>(
@@ -2047,96 +2035,6 @@ const Learn: React.FC = () => {
         // Use updateVideoState instead of handleSeek for progress updates
         await updateVideoState(data.currentTime);
     }, [state.currentLesson, state.isTransitioning, updateVideoState]);
-
-    // Update video state periodically with reduced frequency to prevent memory leaks
-    useEffect(() => {
-        let timeoutId: NodeJS.Timeout;
-
-        async function checkVideoPosition() {
-            if (!playerRef.current || !state.currentLesson || !videoState.isReady || state.isTransitioning) {
-                // Schedule next update if we're still playing
-                if (videoState.playing && !state.isTransitioning) {
-                    timeoutId = setTimeout(checkVideoPosition, 1000); // Increased to 1 second
-                }
-                return;
-            }
-            
-            try {
-                // Skip if we're already seeking
-                if (isSeeking) {
-                    logEvent('CHECK_POSITION_SKIPPED_ALREADY_SEEKING', {
-                        videoId: state.currentLesson.data.video.id
-                    });
-                    
-                    // Schedule next check
-                    if (videoState.playing && !state.isTransitioning) {
-                        timeoutId = setTimeout(checkVideoPosition, 1000); // Increased to 1 second
-                    }
-                    return;
-                }
-                
-                // Get the current time from the player
-                const time = await playerRef.current.getCurrentTime().catch(error => {
-                    logEvent('GET_CURRENT_TIME_ERROR', {
-                        error: error instanceof Error ? error.message : String(error),
-                        videoId: state.currentLesson?.data.video.id
-                    });
-                    return -1; // Return invalid time to trigger rescheduling
-                });
-                
-                // If we couldn't get the time, reschedule and try again
-                if (time === -1) {
-                    if (videoState.playing && !state.isTransitioning) {
-                        timeoutId = setTimeout(checkVideoPosition, 1000); // Increased to 1 second
-                    }
-                    return;
-                }
-                
-                // Only check for clip boundaries, don't update UI state as frequently
-                const clipStart = state.currentLesson.data.video.clipStart;
-                const clipEnd = state.currentLesson.data.video.clipEnd;
-                
-                // Check if we're outside the clip boundaries
-                if (time < clipStart - 0.5 || time >= clipEnd - 0.2) {
-                    // Only call updateVideoState when we need to enforce boundaries
-                await updateVideoState(time);
-                } else {
-                    // Just update the current time without all the other checks
-                    setVideoState(prev => ({
-                        ...prev,
-                        currentTime: Math.max(0, time - clipStart) // Ensure we don't go negative
-                    }));
-                }
-                
-                // Schedule next check if we're still playing
-                if (videoState.playing && !state.isTransitioning) {
-                    timeoutId = setTimeout(checkVideoPosition, 1000); // Increased to 1 second
-                }
-            } catch (error) {
-                logEvent('CHECK_VIDEO_POSITION_ERROR', {
-                    error: error instanceof Error ? error.message : String(error),
-                    videoId: state.currentLesson?.data.video.id
-                });
-                
-                // Schedule next check even if there was an error
-                if (videoState.playing && !state.isTransitioning) {
-                    timeoutId = setTimeout(checkVideoPosition, 1000); // Increased to 1 second
-                }
-            }
-        }
-        
-        // Start checking position if video is playing and ready
-        if (videoState.playing && videoState.isReady && !state.isTransitioning) {
-            // Initial delay to prevent immediate checking
-            timeoutId = setTimeout(checkVideoPosition, 1000);
-        }
-        
-        return () => {
-            if (timeoutId) {
-            clearTimeout(timeoutId);
-            }
-        };
-    }, [videoState.playing, videoState.isReady, state.currentLesson, state.isTransitioning, updateVideoState, isSeeking]);
 
     // Add effect to handle video transition state machine
     useEffect(() => {
